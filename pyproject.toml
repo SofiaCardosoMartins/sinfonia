@@ -74,6 +74,8 @@ sinfonia-tier3 = "sinfonia.cli_tier3:app"
 network = "sinfonia.matchers:match_by_network"
 location = "sinfonia.matchers:match_by_location"
 random = "sinfonia.matchers:match_random"
+resources = "sinfonia.matchers:match_resources"
+balance = "sinfonia.matchers:match_balance"
 
 [tool.isort]
 py_version = 37

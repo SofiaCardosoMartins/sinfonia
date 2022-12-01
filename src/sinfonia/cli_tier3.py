@@ -76,10 +76,11 @@ class WireguardKeyFormatter:
         return value
 
 
-def deploy_backend(deployment_url: URL) -> Sequence[Dict[str, Any]]:
+def deploy_backend(deployment_url: URL, resource_reqs : dict) -> Sequence[Dict[str, Any]]:
     """Request a backend (re)deployment from the orchestrator"""
     # fire off deployment request
-    response = requests.post(str(deployment_url))
+    print("LOG: Resource Reqs: ", resource_reqs)
+    response = requests.post(str(deployment_url), json=resource_reqs)
     response.raise_for_status()
 
     # load openapi specification to validate the response
@@ -168,6 +169,9 @@ zeroconf_option = typer.Option(False, help="Try to discover local Tier2 with MDN
 @app.command()
 def main(
     tier1_url: str,
+    cpu_reqs: str,
+    mem_reqs: str,
+    disk_reqs: str,
     application_uuid: UUID,
     application: List[str],
     config_only: bool = config_option,
@@ -175,7 +179,7 @@ def main(
     zeroconf: bool = zeroconf_option,
 ) -> None:
     application_keys = load_application_keys(application_uuid)
-
+    resource_reqs = {"cpu" : float(cpu_reqs), "mem" : float(mem_reqs), "disk" : float(disk_reqs)}
     if zeroconf:
         zc = Zeroconf()
         info = zc.get_service_info(
@@ -198,7 +202,7 @@ def main(
 
     try:
         typer.echo("Deploying... ", nl=False)
-        deployments = deploy_backend(deployment_url)
+        deployments = deploy_backend(deployment_url, resource_reqs)
         typer.echo("done")
     except ConnectionError:
         typer.echo("failed to connect to sinfonia-tier1/-tier2")

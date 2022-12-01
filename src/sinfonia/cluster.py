@@ -38,6 +38,13 @@ RESOURCE_QUERIES = {
     "net_rx_rate": "instance:node_network_receive_bytes_excluding_lo:rate5m",
     "net_tx_rate": "instance:node_network_transmit_bytes_excluding_lo:rate5m",
     "gpu_ratio": "sum(DCGM_FI_DEV_GPU_UTIL) / count(DCGM_FI_DEV_GPU_UTIL)",
+    "mem_avail": "node_memory_MemAvailable_bytes",
+    # "cpu_avail": "sum(rate(node_cpu_seconds_total{mode='idle'}[1m]))",
+    "cpu_avail": "(sum(count without(cpu,mode) (node_cpu_seconds_total{mode='idle'}))) * (1-(sum(rate(node_cpu_seconds_total{mode!='idle'}[1m])) / sum(node:node_num_cpu:sum)))",
+    "cpu_used": "(sum(count without(cpu,mode) (node_cpu_seconds_total{mode!='idle'}))) * (1-(sum(rate(node_cpu_seconds_total{mode!='idle'}[1m])) / sum(node:node_num_cpu:sum)))",
+    "mem_used": "node_memory_MemTotal_bytes-node_memory_MemAvailable_bytes",
+    "disk_avail": "sum(node_filesystem_avail_bytes{device='/dev/sda2',mountpoint='/'})", 
+
 }
 
 LEASE_DURATION = 300  # seconds
@@ -144,7 +151,7 @@ class Cluster:
         try:
             ns = self.get_peer(
                 f"findcloudlet.org/uuid={uuid}",
-                f"findcloudlet.org/key={key.k8s_label}",
+                f"findcloudlet.org/key={key.urlsafe}",
             )
             return Deployment.from_manifest(self, ns[0])
         except IndexError:

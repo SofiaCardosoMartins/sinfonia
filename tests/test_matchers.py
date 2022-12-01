@@ -13,6 +13,8 @@ from sinfonia.matchers import (
     match_by_location,
     match_by_network,
     match_random,
+    match_resources,
+    match_balance,
     tier1_best_match,
 )
 

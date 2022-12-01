@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import logging
 import random
+import math
 from operator import itemgetter
 from typing import Callable, Iterator, List, Sequence
 
@@ -137,3 +138,47 @@ def match_random(
         logger.info("random (%s)", cloudlet.name)
         cloudlets.remove(cloudlet)
         yield cloudlet
+
+def match_resources(
+    client_info: ClientInfo,
+    _deployment_recipe: DeploymentRecipe,
+    cloudlets: list[Cloudlet],
+) -> Iterator[Cloudlet]:
+    
+    for cloudlet in cloudlets:
+        print("LOG: Cloudlet info: ", cloudlet.resources) # dictionary
+    print("LOG: Client info: ", client_info)
+
+    for cloudlet in cloudlets[:]:
+        print("LOG: Cloudlet resources: ", cloudlet.resources)
+        if(cloudlet.resources["cpu_avail"] >= client_info.resourceReqs["cpu"] and
+            cloudlet.resources["mem_avail"] >= client_info.resourceReqs["mem"]
+             and cloudlet.resources["disk_avail"] >= client_info.resourceReqs["disk"]):
+                yield cloudlet
+                print("LOG: Accept cloudlet ", cloudlet)
+        cloudlets.remove(cloudlet)
+
+def match_balance(
+    client_info: ClientInfo,
+    _deployment_recipe: DeploymentRecipe,
+    cloudlets: list[Cloudlet],
+) -> Iterator[Cloudlet]:
+    """Balanced match function based on L2 norm of (cpu, mem) increment"""
+    norms=[]
+    cloudlets_accepted=[]
+    for cloudlet in cloudlets[:]:
+        if(cloudlet.resources["cpu_avail"] >= client_info.resourceReqs["cpu"] and
+            cloudlet.resources["mem_avail"] >= client_info.resourceReqs["mem"]
+                and cloudlet.resources["disk_avail"] >= client_info.resourceReqs["disk"]):
+                    cpu_increment=cloudlet.resources["cpu_used"] + client_info.resourceReqs["cpu"]
+                    mem_increment=cloudlet.resources["mem_used"] + client_info.resourceReqs["mem"]
+                    norm=math.sqrt(pow(cpu_increment,2) + pow(mem_increment,2))
+                    norms.append(norm)
+                    cloudlets_accepted.append(cloudlet)
+        cloudlets.remove(cloudlet)
+
+    # sort cloudlets based on L2 norm
+    sorted_cloudlets=[x for _, x in sorted(zip(norms, cloudlets_accepted), key=lambda pair: pair[0])]
+    for cloudlet in sorted_cloudlets:
+        yield cloudlet
+        print("LOG: Accept cloudlet ", cloudlet)

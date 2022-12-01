@@ -26,6 +26,7 @@ class ClientInfo:
     publickey: WireguardKey = field(converter=WireguardKey)
     ipaddress: IPv4Address | IPv6Address
     location: GeoLocation | None
+    resourceReqs: dict
 
     @classmethod
     def from_request(cls, application_key: str) -> ClientInfo:
@@ -43,10 +44,18 @@ class ClientInfo:
         except ValueError:
             client_location = None
 
+        try:
+            resource_reqs = request.json
+        except ValueError:
+            resource_reqs = None
+
+        print("LOG: RESOURCE REQS: ", resource_reqs)
+
         return cls(
             publickey=application_key,
             ipaddress=client_ipaddress,
             location=client_location,
+            resourceReqs=resource_reqs
         )
 
     @classmethod

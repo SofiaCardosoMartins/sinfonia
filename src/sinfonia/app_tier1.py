@@ -41,7 +41,7 @@ from .openapi import load_spec
 
 class Tier1DefaultConfig:
     CLOUDLETS: str | Path | None = None
-    MATCHERS: list[str] = ["network", "location", "random"]
+    MATCHERS: list[str] = ["network", "location", "random", "resources", "balance"]
     RECIPES: str | Path | URL = "RECIPES"
 
     # These are initialized by the wsgi app factory from the config
@@ -153,7 +153,7 @@ def tier1_server(
         [],
         "--match",
         "-m",
-        help="Select Tier2 best match functions [default: network, location, random]",
+        help="Select Tier2 best match functions [default: network, location, random, resources]",
     ),
     list_matchers: OptionalBool = typer.Option(
         None,
