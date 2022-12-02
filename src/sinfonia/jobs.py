@@ -12,6 +12,7 @@ import logging
 
 import pendulum
 import requests
+import time
 from flask_apscheduler import APScheduler
 from requests.exceptions import RequestException
 from yarl import URL
@@ -74,6 +75,12 @@ def report_to_tier1_endpoints():
 
     logging.info("Got %s", str(resources))
 
+    # write metrics to file (performance eval)
+    metrics_file = './tier2_metrics.csv'
+    with open(metrics_file, 'a') as f:
+        metrics_string = f"{time.time()},{resources['cpu_ratio']},{resources['mem_ratio']},{resources['net_rx_rate']},{resources['net_tx_rate']},{resources['mem_avail']}, {resources['cpu_avail']},{resources['cpu_used']}, {resources['mem_used']} \n"
+        f.write(metrics_string)
+
     for tier1_url in config["TIER1_URLS"]:
         tier1_endpoint = URL(tier1_url) / "api/v1/cloudlets/"
         try:
@@ -98,7 +105,7 @@ def start_reporting_job():
     scheduler.add_job(
         func=report_to_tier1_endpoints,
         trigger="interval",
-        seconds=15,
+        seconds=5,
         max_instances=1,
         coalesce=True,
         id="report_to_tier1",
