@@ -75,7 +75,9 @@ network = "sinfonia.matchers:match_by_network"
 location = "sinfonia.matchers:match_by_location"
 random = "sinfonia.matchers:match_random"
 resources = "sinfonia.matchers:match_resources"
-balance = "sinfonia.matchers:match_balance"
+balance_cpu_mem = "sinfonia.matchers:match_balance_cpu_mem"
+balance_cpu = "sinfonia.matchers:match_balance_cpu"
+balance_mem = "sinfonia.matchers:match_balance_mem"
 
 [tool.isort]
 py_version = 37
