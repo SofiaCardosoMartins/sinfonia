@@ -41,7 +41,7 @@ from .openapi import load_spec
 
 class Tier1DefaultConfig:
     CLOUDLETS: str | Path | None = None
-    MATCHERS: list[str] = ["network", "location", "random", "resources", "balance"]
+    MATCHERS: list[str] = ["network", "location", "random", "resources", "balance_cpu", "balance_mem", "balance_cpu_mem"]
     RECIPES: str | Path | URL = "RECIPES"
 
     # These are initialized by the wsgi app factory from the config
