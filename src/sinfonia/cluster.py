@@ -40,11 +40,12 @@ RESOURCE_QUERIES = {
     "gpu_ratio": "sum(DCGM_FI_DEV_GPU_UTIL) / count(DCGM_FI_DEV_GPU_UTIL)",
     "mem_avail": "node_memory_MemAvailable_bytes",
     # "cpu_avail": "sum(rate(node_cpu_seconds_total{mode='idle'}[1m]))",
-    "cpu_avail": "(sum(count without(cpu,mode) (node_cpu_seconds_total{mode='idle'}))) * (1-(sum(rate(node_cpu_seconds_total{mode!='idle'}[1m])) / sum(node:node_num_cpu:sum)))",
-    "cpu_used": "(sum(count without(cpu,mode) (node_cpu_seconds_total{mode!='idle'}))) * (1-(sum(rate(node_cpu_seconds_total{mode!='idle'}[1m])) / sum(node:node_num_cpu:sum)))",
+    "cpu_avail": "sum(delta(node_cpu_seconds_total{mode='idle'}[1m]))", # sum of number of seconds spent by all cores in idle mode over the last minute
+    "cpu_used": "sum(delta(node_cpu_seconds_total{mode!='idle'}[1m]))", # sum of number of seconds spent by all cores in an active mode over the last minute
     "mem_used": "node_memory_MemTotal_bytes-node_memory_MemAvailable_bytes",
     "disk_avail": "sum(node_filesystem_avail_bytes{device='/dev/sda2',mountpoint='/'})", 
-
+    #"cpu_avail": "(sum(count without(cpu,mode) (node_cpu_seconds_total{mode='idle'}))) * (1-(sum(rate(node_cpu_seconds_total{mode!='idle'}[1m])) / sum(node:node_num_cpu:sum)))",
+    #"cpu_used": "(sum(count without(cpu,mode) (node_cpu_seconds_total{mode!='idle'}))) * (1-(sum(rate(node_cpu_seconds_total{mode!='idle'}[1m])) / sum(node:node_num_cpu:sum)))",
 }
 
 LEASE_DURATION = 300  # seconds
