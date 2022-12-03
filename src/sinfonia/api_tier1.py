@@ -61,7 +61,6 @@ class DeployView(MethodView):
         candidates = islice(
             tier1_best_match(matchers, client_info, requested, available), max_results
         )
-        print(f"SELECTED CLOUDLETS: {[x for x in tier1_best_match(matchers, client_info, requested, available)]}")
 
         # fire off deployment requests
         requests = [

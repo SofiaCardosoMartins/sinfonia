@@ -43,7 +43,7 @@ RESOURCE_QUERIES = {
     "cpu_avail": "sum(delta(node_cpu_seconds_total{mode='idle'}[1m]))", # sum of number of seconds spent by all cores in idle mode over the last minute
     "disk_avail": "sum(node_filesystem_avail_bytes{device='/dev/sda2',mountpoint='/'})", 
     "cpu_used": "sum(delta(node_cpu_seconds_total{mode!='idle'}[1m]))", # sum of number of seconds spent by all cores in an active mode over the last minute
-    "mem_used": "node_memory_MemTotal_bytes-node_memory_MemAvailable_bytes"
+    "mem_used": "node_memory_MemTotal_bytes-node_memory_MemAvailable_bytes",
     #"cpu_avail": "(sum(count without(cpu,mode) (node_cpu_seconds_total{mode='idle'}))) * (1-(sum(rate(node_cpu_seconds_total{mode!='idle'}[1m])) / sum(node:node_num_cpu:sum)))",
     #"cpu_used": "(sum(count without(cpu,mode) (node_cpu_seconds_total{mode!='idle'}))) * (1-(sum(rate(node_cpu_seconds_total{mode!='idle'}[1m])) / sum(node:node_num_cpu:sum)))",
 }
