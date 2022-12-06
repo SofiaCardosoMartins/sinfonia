@@ -9,7 +9,7 @@ from flask import Flask
 from geolite2 import geolite2
 
 from sinfonia.deployment_repository import DeploymentRepository
-from sinfonia.matchers import match_by_location, match_by_network, match_random, match_resources, match_balance_cpu_mem, match_balance_cpu, match_balance_mem
+from sinfonia.matchers import match_by_location, match_by_network, match_random, match_resources, match_best_cpu, match_best_cpu_mem, match_balance_cpu_mem, match_balance_cpu, match_balance_mem
 
 GOOD_UUID = "00000000-0000-0000-0000-000000000000"
 GOOD_CONTENT = """\
@@ -80,7 +80,7 @@ def mock_generate_keypair(monkeypatch):
 def flask_app():
     app = Flask("test")
     app.config["geolite2_reader"] = geolite2.reader()
-    app.config["match_functions"] = [match_by_network, match_by_location, match_random, match_resources, match_balance_cpu_mem, match_balance_cpu, match_balance_mem]
+    app.config["match_functions"] = [match_by_network, match_by_location, match_random, match_resources, match_best_cpu, match_best_cpu_mem, match_balance_cpu_mem, match_balance_cpu, match_balance_mem]
     return app
 
 

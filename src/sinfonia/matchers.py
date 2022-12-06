@@ -158,8 +158,57 @@ def match_resources(
  #               print("LOG: Accept cloudlet ", cloudlet)
         cloudlets.remove(cloudlet)
 
-    print("-----------: Accepted cloudlet: ", accepted_cloudlets[0])
+    print("LOG: Accept cloudlet ", accepted_cloudlets[0])
     yield accepted_cloudlets[0]
+
+def match_best_cpu(
+    client_info: ClientInfo,
+    _deployment_recipe: DeploymentRecipe,
+    cloudlets: list[Cloudlet],
+) -> Iterator[Cloudlet]:
+    
+    cpu_load=[]
+    accepted_cloudlets=[]
+    for cloudlet in cloudlets[:]:
+#        print("LOG: Cloudlet resources: ", cloudlet.resources)
+        if(cloudlet.resources["cpu_avail"] >= client_info.resourceReqs["cpu"] and
+            cloudlet.resources["mem_avail"] >= client_info.resourceReqs["mem"]
+             and cloudlet.resources["disk_avail"] >= client_info.resourceReqs["disk"]):
+                cpu_load.append(cloudlet.resources["cpu_used"])
+                accepted_cloudlets.append(cloudlet)
+ #               print("LOG: Accept cloudlet ", cloudlet)
+        cloudlets.remove(cloudlet)
+
+    sorted_cloudlets=[x for _, x in sorted(zip(cpu_load, accepted_cloudlets, reverse=True), key=lambda pair: pair[0])]
+    for cloudlet in sorted_cloudlets:
+        yield cloudlet
+    print("LOG: Accept cloudlet ", sorted_cloudlets[0])
+    yield sorted_cloudlets[0]
+
+def match_best_cpu_mem(
+    client_info: ClientInfo,
+    _deployment_recipe: DeploymentRecipe,
+    cloudlets: list[Cloudlet],
+) -> Iterator[Cloudlet]:
+    
+    cpu_mem_load=[]
+    accepted_cloudlets=[]
+    for cloudlet in cloudlets[:]:
+#        print("LOG: Cloudlet resources: ", cloudlet.resources)
+        if(cloudlet.resources["cpu_avail"] >= client_info.resourceReqs["cpu"] and
+            cloudlet.resources["mem_avail"] >= client_info.resourceReqs["mem"]
+             and cloudlet.resources["disk_avail"] >= client_info.resourceReqs["disk"]):
+                norm=math.sqrt(pow(cloudlet.resources["cpu_used"],2) + pow(cloudlet.resources["mem_used"],2))
+                cpu_mem_load.append(norm)
+                accepted_cloudlets.append(cloudlet)
+ #               print("LOG: Accept cloudlet ", cloudlet)
+        cloudlets.remove(cloudlet)
+
+    sorted_cloudlets=[x for _, x in sorted(zip(cpu_mem_load, accepted_cloudlets, reverse=True), key=lambda pair: pair[0])]
+    for cloudlet in sorted_cloudlets:
+        yield cloudlet
+    print("LOG: Accept cloudlet ", sorted_cloudlets[0])
+    yield sorted_cloudlets[0]
 
 def match_balance_cpu_mem(
     client_info: ClientInfo,

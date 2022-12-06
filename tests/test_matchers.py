@@ -14,6 +14,8 @@ from sinfonia.matchers import (
     match_by_network,
     match_random,
     match_resources,
+    match_best_cpu, 
+    match_best_cpu_mem,
     match_balance_cpu_mem,
     match_balance_cpu,
     match_balance_mem,

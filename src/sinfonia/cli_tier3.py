@@ -12,6 +12,7 @@ import ipaddress
 import os
 import string
 import sys
+import time
 from contextlib import contextmanager
 from typing import Any, Dict, List, Sequence
 from uuid import UUID
@@ -80,6 +81,7 @@ def deploy_backend(deployment_url: URL, resource_reqs : dict) -> Sequence[Dict[s
     """Request a backend (re)deployment from the orchestrator"""
     # fire off deployment request
     print("LOG: Resource Reqs: ", resource_reqs)
+    
     response = requests.post(str(deployment_url), json=resource_reqs)
     response.raise_for_status()
 
@@ -213,6 +215,15 @@ def main(
 
     deployment_data = deployments[0]
     deployment_name = deployment_data.get("DeploymentName", "")
+    deployment_ip = deployment_data.get("TunnelConfig").get("endpoint").split(":", 1)[0]
+    print("LOG: Associated with cloudlet ", deployment_ip)
+    
+    # write cloudlet association (performance eval)
+    cloudlet_association_file = './cloudlet_association.csv'
+    with open(cloudlet_association_file, 'a') as f:
+        log_string = f"{time.time()},{deployment_ip} \n"
+        f.write(log_string)
+    
     NS = "".join(
         c for c in deployment_name.lower() if c in string.ascii_lowercase
     ) or randomname.get_name(sep="")
