@@ -179,7 +179,7 @@ def match_best_cpu(
  #               print("LOG: Accept cloudlet ", cloudlet)
         cloudlets.remove(cloudlet)
 
-    sorted_cloudlets=[x for _, x in sorted(zip(cpu_load, accepted_cloudlets, reverse=True), key=lambda pair: pair[0])]
+    sorted_cloudlets=[x for _, x in sorted(zip(cpu_load, accepted_cloudlets), key=lambda pair: pair[0], reverse=True)]
     for cloudlet in sorted_cloudlets:
         yield cloudlet
     print("LOG: Accept cloudlet ", sorted_cloudlets[0])
@@ -204,7 +204,7 @@ def match_best_cpu_mem(
  #               print("LOG: Accept cloudlet ", cloudlet)
         cloudlets.remove(cloudlet)
 
-    sorted_cloudlets=[x for _, x in sorted(zip(cpu_mem_load, accepted_cloudlets, reverse=True), key=lambda pair: pair[0])]
+    sorted_cloudlets=[x for _, x in sorted(zip(cpu_mem_load, accepted_cloudlets), key=lambda pair: pair[0], reverse=True)]
     for cloudlet in sorted_cloudlets:
         yield cloudlet
     print("LOG: Accept cloudlet ", sorted_cloudlets[0])
