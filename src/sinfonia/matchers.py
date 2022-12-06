@@ -144,18 +144,22 @@ def match_resources(
     cloudlets: list[Cloudlet],
 ) -> Iterator[Cloudlet]:
     
-    for cloudlet in cloudlets:
-        print("LOG: Cloudlet info: ", cloudlet.resources) # dictionary
-    print("LOG: Client info: ", client_info)
-
+    
+#    for cloudlet in cloudlets:
+#        print("LOG: Cloudlet info: ", cloudlet.resources) # dictionary
+#        print("LOG: Client info: ", client_info)
+    accepted_cloudlets=[]
     for cloudlet in cloudlets[:]:
-        print("LOG: Cloudlet resources: ", cloudlet.resources)
+#        print("LOG: Cloudlet resources: ", cloudlet.resources)
         if(cloudlet.resources["cpu_avail"] >= client_info.resourceReqs["cpu"] and
             cloudlet.resources["mem_avail"] >= client_info.resourceReqs["mem"]
              and cloudlet.resources["disk_avail"] >= client_info.resourceReqs["disk"]):
-                yield cloudlet
-                print("LOG: Accept cloudlet ", cloudlet)
+                accepted_cloudlets.append(cloudlet)
+ #               print("LOG: Accept cloudlet ", cloudlet)
         cloudlets.remove(cloudlet)
+
+    print("-----------: Accepted cloudlet: ", accepted_cloudlets[0])
+    yield accepted_cloudlets[0]
 
 def match_balance_cpu_mem(
     client_info: ClientInfo,
@@ -202,6 +206,9 @@ def match_balance_cpu(
     
     # sort cloudlets based on L2 norm
     sorted_cloudlets=[x for _, x in sorted(zip(norms, cloudlets_accepted), key=lambda pair: pair[0])]
+    sorted_cloudlets=[sorted_cloudlets[0]]
+    print("CLOUDLETS: ", sorted_cloudlets, "\n")
+	
     for cloudlet in sorted_cloudlets:
         yield cloudlet
 
